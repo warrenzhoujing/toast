@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
 	public Controller2D target;
+	public Player player;
 	public Vector2 focusAreaSize;
 
 	public float verticalOffset;
@@ -19,6 +20,8 @@ public class CameraFollow : MonoBehaviour {
 	float smoothLookVelocityX;
 	float smoothLookVelocityY;
 
+	bool lookAheadStopped;
+
 	void Start () {
 		focusArea = new FocusArea(target.collider.bounds, focusAreaSize);
 	}
@@ -29,10 +32,22 @@ public class CameraFollow : MonoBehaviour {
 
 		if (focusArea.velocity.x != 0) {
 			lookAheadDirX = Mathf.Sign(focusArea.velocity.x);
+			if (Mathf.Sign(player.public_input.x) == Mathf.Sign(focusArea.velocity.x) && player.public_input.x != 0) {
+				lookAheadStopped = false;
+				targetLookAheadX = lookAheadDirX * lookAheadDistanceX;
+			} else {
+				if (!lookAheadStopped) {
+					targetLookAheadX = currentLookAheadX + (lookAheadDirX * lookAheadDistanceX - currentLookAheadX)/4;
+					lookAheadStopped = true;
+				}
+				
+			}
 		}
 
-		targetLookAheadX = lookAheadDirX * lookAheadDistanceX;
+		
 		currentLookAheadX = Mathf.SmoothDamp(currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
+
+		focusPosition.y = Mathf.SmoothDamp(transform.position.y, focusPosition.y, ref smoothLookVelocityY, verticalSmoothTime);
 
 		focusPosition += Vector2.right * currentLookAheadX;
 

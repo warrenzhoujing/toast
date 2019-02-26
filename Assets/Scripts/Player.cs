@@ -23,6 +23,9 @@ public class Player : MonoBehaviour {
 	float maxJumpForce = 10;
 	float minJumpForce = 10;
 
+	[HideInInspector]
+	public Vector2 public_input;
+
 	Vector3 velocity;
 	Controller2D controller;
 
@@ -39,6 +42,7 @@ public class Player : MonoBehaviour {
 		bool onWall = false;
 
 		Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+		public_input = input;
 
 		int wallDirX = (controller.collisions.left)? -1 : 1;
 
