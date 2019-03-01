@@ -55,9 +55,11 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\CameraFollow.cs" />
      <Compile Include="Assets\Scripts\Controller2D.cs" />
+     <Compile Include="Assets\Scripts\Death.cs" />
      <Compile Include="Assets\Scripts\PlatformController.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\RaycastController.cs" />
+     <Compile Include="Assets\Scripts\Sawblade.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>/Users/zhoujing/Desktop/Toast/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
  </Reference>

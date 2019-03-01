@@ -16,12 +16,18 @@ public class Player : MonoBehaviour {
 	public float accelerationTimeGrounded = 0.15f;
 	public float wallSlideSpeedMax = 3f;
 	public float wallStickTime;
+
+	public Sprite defaultSprite;
+	public Sprite midAir;
+
 	float timeToWallUnstick;
 	float delay = 1f;
 	float velocityXSmoothing;
 	float gravity = -20;
 	float maxJumpForce = 10;
 	float minJumpForce = 10;
+	SpriteRenderer spriteRenderer;
+	Animator animator;
 
 	[HideInInspector]
 	public Vector2 public_input;
@@ -35,6 +41,9 @@ public class Player : MonoBehaviour {
 		gravity = -(2 * maxJumpHeight) / Mathf.Pow(TimeToJumpApex, 2);
 		maxJumpForce = Mathf.Abs(gravity * TimeToJumpApex);
 		minJumpForce = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
+		spriteRenderer = GetComponent<SpriteRenderer>();
+		animator = GetComponent<Animator>();
+
 	}
 
 	void Update () {
@@ -44,10 +53,24 @@ public class Player : MonoBehaviour {
 		Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 		public_input = input;
 
+		if (input.x < 0) {
+			spriteRenderer.flipX = true;
+		} else if (input.x > 0) {
+			spriteRenderer.flipX = false;
+		}
+
+		if (input.x != 0 && controller.collisions.below) {
+			animator.enabled = true;
+		} else {
+			animator.enabled = false;
+			spriteRenderer.sprite = defaultSprite;
+		}
+
 		int wallDirX = (controller.collisions.left)? -1 : 1;
 
 		float targetVelocityX = input.x * MoveSpeed;
 		velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below)?accelerationTimeGrounded:accelerationTimeAirborne);
+
 		
 		if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below) {
 			onWall = true;
@@ -70,6 +93,14 @@ public class Player : MonoBehaviour {
 				}
 			}
 			
+		}
+
+		if (!controller.collisions.below) {
+			if (onWall || input.x != 0) {
+				spriteRenderer.sprite = midAir;
+			} else {
+
+			}
 		}
 
 		if (controller.collisions.above || controller.collisions.below) {
@@ -118,5 +149,10 @@ public class Player : MonoBehaviour {
 		
 		velocity.y += gravity * Time.deltaTime;
 		controller.Move(velocity * Time.deltaTime);
+
+
 	}
+
+	
+
 }
